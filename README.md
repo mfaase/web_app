@@ -145,11 +145,12 @@ az webapp deployment source config --name $WEB_APP_NAME --resource-group $RESOUR
 # Configure Environment Variables
 az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --settings FLASK_APP=run.py FLASK_ENV=production
 
-# Configure the startup command
+# Set startup command
 az webapp config set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --startup-file startup.txt
 
-# Run initialization script
-az webapp ssh --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --command "./init_app.sh && python add_initial_data.py"
+# Run initialization script via SSH into the container
+az webapp remote-connection create --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --timeout 60
+ssh -i ~/.ssh/id_rsa -p 8022 appservice@127.0.0.1 "bash ./init_app.sh && python add_initial_data.py"
 
 # Restart the app
 az webapp restart --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME
@@ -193,16 +194,18 @@ az webapp deployment source config --name $WEB_APP_NAME --resource-group $RESOUR
 # Configure Environment Variables
 az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --settings FLASK_APP=run.py FLASK_ENV=production
 
-# Configure the startup command
+# Set startup command
 az webapp config set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --startup-file startup.txt
 
-# Run initialization script
-az webapp ssh --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --command "./init_app.sh && python add_initial_data.py"
+# Run initialization script via SSH into the container
+az webapp remote-connection create --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --timeout 60
+ssh -i ~/.ssh/id_rsa -p 8022 appservice@127.0.0.1 "bash ./init_app.sh && python add_initial_data.py"
 
 # Restart the app
 az webapp restart --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME
 
 echo "Redeployment and initialization completed."
+
 ```
 
 

@@ -95,32 +95,115 @@ Don't forget to update the the push to the database in `add_initial_data.py` wit
     ```
 2. Create an Azure App Service Plan:
     ```bash
-    az group create --name myResourceGroup --location "West EU"
-    az appservice plan create --name myAppServicePlan --resource-group myResourceGroup --sku FREE
+    az group create --name rg-mlScoringWebApp --location westeurope
+    az appservice plan create --name mlScoringWebAppPlan --resource-group rg-mlScoringWebApp --sku B2 --is-linux
     ```  
 3. Create a Web App:
     ```bash
-    az webapp create --resource-group myResourceGroup --plan myAppServicePlan --name mlScoringWebApp --runtime "PYTHON|3.8"
+    az webapp create --resource-group rg-mlScoringWebApp --plan mlScoringWebAppPlan --name mlScoringWebApp --runtime "PYTHON|3.12"
     ```  
 4. Deploy the app using Git:
-- Initialize Git:
-    ```bash
-    git init
-    git add .
-    git commit -m "Initial commit"
-    ```  
 - Set the remote and push to Azure:
     ```bash
-    az webapp deployment source config-local-git --name mlScoringWebApp --resource-group myResourceGroup
-    git remote add azure <URL provided by the previous command>
-    git push azure master
+    az webapp deployment source config --name mlScoringWebApp --resource-group rg-mlScoringWebApp --repo-url https://github.com/mfaase/web_app --branch main --manual-integration
     ```  
 5. Configure environment variables:
     ```bash
-    az webapp config appsettings set --resource-group myResourceGroup --name mlScoringWebApp --settings FLASK_APP=run.py FLASK_ENV=production
+    az webapp config appsettings set --resource-group rg-mlScoringWebApp --name mlScoringWebApp --settings FLASK_APP=run.py FLASK_ENV=production
     ```  
-6. Access the applet
+
+
+
+## Deployment script
+
+### Deploying first time:
+
+```bash
+#!/bin/bash
+
+# Variables
+RESOURCE_GROUP="rg-mlScoringWebApp"
+APP_SERVICE_PLAN="mlScoringWebAppPlan"
+WEB_APP_NAME="mlScoringWebApp"
+LOCATION="westeurope"
+RUNTIME="PYTHON|3.12"
+REPO_URL="https://github.com/mfaase/web_app"
+BRANCH="main"
+
+# Create Resource Group
+az group create --name $RESOURCE_GROUP --location $LOCATION
+
+# Create App Service Plan
+az appservice plan create --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP --sku B2 --is-linux
+
+# Create Web App
+az webapp create --resource-group $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --name $WEB_APP_NAME --runtime $RUNTIME
+
+# Set Deployment Source
+az webapp deployment source config --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP --repo-url $REPO_URL --branch $BRANCH --manual-integration
+
+# Configure Environment Variables
+az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --settings FLASK_APP=run.py FLASK_ENV=production
+
+# Run initialization script
+az webapp ssh --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --command "./init_app.sh && python add_initial_data.py"
+
+# Restart the app
+az webapp restart --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME
+
+echo "Deployment and initialization completed."
+
+```
+
+### Redeploying:
+
+```bash
+#!/bin/bash
+
+# Variables
+RESOURCE_GROUP="rg-mlScoringWebApp"
+APP_SERVICE_PLAN="mlScoringWebAppPlan"
+WEB_APP_NAME="mlScoringWebApp"
+LOCATION="westeurope"
+RUNTIME="PYTHON|3.12"
+REPO_URL="https://github.com/mfaase/web_app"
+BRANCH="main"
+
+# Delete the existing Web App
+az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP
+
+# Delete the existing App Service Plan
+az appservice plan delete --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP --yes
+
+# Recreate Resource Group (optional, skip if already exists)
+az group create --name $RESOURCE_GROUP --location $LOCATION
+
+# Recreate App Service Plan
+az appservice plan create --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP --sku B2 --is-linux
+
+# Recreate Web App
+az webapp create --resource-group $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --name $WEB_APP_NAME --runtime $RUNTIME
+
+# Set Deployment Source
+az webapp deployment source config --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP --repo-url $REPO_URL --branch $BRANCH --manual-integration
+
+# Configure Environment Variables
+az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --settings FLASK_APP=run.py FLASK_ENV=production
+
+# Run initialization script
+az webapp ssh --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --command "./init_app.sh && python add_initial_data.py"
+
+# Restart the app
+az webapp restart --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME
+
+echo "Redeployment and initialization completed."
+```
+
+
+
+### Access the applet
 - The application should now be accessible at `https://mlScoringWebApp.azurewebsites.net`.
+
 
 ## Participating in competitions
 Uploading csv's is straightforward and the following format is expected:

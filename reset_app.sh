@@ -8,4 +8,4 @@ pip install -r requirements.txt
 # flask db migrate -m "Initial migration"
 # flask db upgrade
 python add_initial_data.py
-echo "Reset completed."
+echo "Reset completed.

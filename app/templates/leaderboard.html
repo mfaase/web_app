@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('main.logout') }}" class="logout-button">Logout</a>
+    <div class="leaderboard-container">
+        <h2>Leaderboard - {{ competition.name }}</h2>
+        <a href="{{ url_for('main.home') }}" class="back-button">Back to Competitions</a>
+        <img src="{{ url_for('static', filename=competition.image_path) }}" alt="{{ competition.name }}" class="banner">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload your predictions (CSV only):</label>
+                <input type="file" name="file" accept=".csv" required>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                    <tr>
+                        <td>{{ submission.user.username }}</td>
+                        <td>{{ submission.score }}</td>
+                        <td>{{ submission.timestamp }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

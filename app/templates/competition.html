@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Competitions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('main.logout') }}" class="logout-button">Logout</a>
+    <div class="competition-container">
+        <h2>Competitions</h2>
+        <ul>
+            {% for competition in competitions %}
+                <li>
+                    <div class="competition-item">
+                        <div class="competition-index">{{ loop.index }}</div>
+                        <img src="{{ url_for('static', filename=competition.image_path) }}" alt="{{ competition.name }}">
+                        <div class="competition-info">
+                            <a href="{{ url_for('main.competition', competition_id=competition.id) }}">
+                                <h3>{{ competition.name }}</h3>
+                            </a>
+                            <p>{{ competition.description }}</p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

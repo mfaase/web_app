@@ -145,6 +145,9 @@ az webapp deployment source config --name $WEB_APP_NAME --resource-group $RESOUR
 # Configure Environment Variables
 az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --settings FLASK_APP=run.py FLASK_ENV=production
 
+# Configure the startup command
+az webapp config set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --startup-file startup.txt
+
 # Run initialization script
 az webapp ssh --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --command "./init_app.sh && python add_initial_data.py"
 
@@ -189,6 +192,9 @@ az webapp deployment source config --name $WEB_APP_NAME --resource-group $RESOUR
 
 # Configure Environment Variables
 az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --settings FLASK_APP=run.py FLASK_ENV=production
+
+# Configure the startup command
+az webapp config set --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --startup-file startup.txt
 
 # Run initialization script
 az webapp ssh --resource-group $RESOURCE_GROUP --name $WEB_APP_NAME --command "./init_app.sh && python add_initial_data.py"

@@ -6,7 +6,7 @@ This web application allows users to participate in machine learning competition
 ## Setup
 
 ### Prerequisites
-- Python 3.8
+- Python 3.12
 - pip
 
 ### Installation

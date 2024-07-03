@@ -7,7 +7,7 @@ import os
 def read_true_values(filename):
     with open(filename, 'r') as file:
         reader = csv.DictReader(file)
-        return [int(row['true_values']) for row in reader]
+        return [int(row['y']) for row in reader]
 
 app = create_app()
 

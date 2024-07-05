@@ -34,7 +34,7 @@ with app.app_context():
 
     white_wine_competition = Competition(
         name='White Wine Tasting',
-        description='The data is related to white vinho verde wine samples, from the north of Portugal. The goal is to model wine quality based on physicochemical tests.',
+        description='The data is related to white vinho verde wine samples, from the north of Portugal. The goal is to model wine quality based on physicochemical tests.\nEvaluation metric: Mean Squared Error. Lower scores are better.',
         image_path='images/white_wine_tasting.png',
         true_values=white_wine_true_values,
         is_classification=False
@@ -43,7 +43,7 @@ with app.app_context():
     # Create Competitions
     bank_marketing_competition = Competition(
         name='Bank Marketing',
-        description='The data is related with direct marketing campaigns (phone calls) of a Portuguese banking institution. The classification goal is to predict if the client will subscribe a term deposit (variable y).',
+        description='The data is related with direct marketing campaigns (phone calls) of a Portuguese banking institution. The classification goal is to predict if the client will subscribe a term deposit (variable y).\nEvaluation metric: F1-score. Higher scores are better.',
         image_path='images/credit_card_scoring.png',
         true_values=bank_marketing_true_values,
         is_classification=True

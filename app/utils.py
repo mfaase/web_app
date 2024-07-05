@@ -34,6 +34,7 @@ def calculate_score(filepath, competition):
                 true_values = competition.true_values
                 score = f1_score(true_values, predictions, average='weighted')
             else:
+                true_values = competition.true_values
                 score =  mean_squared_error(y_true=np.array(true_values, dtype=np.float32), y_pred=np.array(predictions.to_list(), dtype=np.float32))
             return score
         except Exception as e:
